@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Ecosystem - Project Creator</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Agentic Ecosystem</h1>
+            <p>Tell us what you want to build, and our AI agents will make it happen!</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Mode Selection -->
+            <div class="mode-selector">
+                <h2>🎯 Select Mode</h2>
+                <div class="mode-buttons">
+                    <button id="fullWorkflowMode" class="mode-btn active" onclick="setMode('full')">
+                        🤖 Full Workflow
+                        <small>All agents work together</small>
+                    </button>
+                    <button id="baOnlyMode" class="mode-btn" onclick="setMode('ba-only')">
+                        📋 BA Specifications Only
+                        <small>Generate detailed requirements & user stories</small>
+                    </button>
+                </div>
+            </div>
+
+            <div class="project-form">
+                <h2 id="formTitle">📝 Project Specification</h2>
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label for="projectName">Project Name:</label>
+                        <input type="text" id="projectName" name="name" required 
+                               placeholder="e.g., Task Management App">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectDescription" id="descriptionLabel">Detailed Description:</label>
+                        <textarea id="projectDescription" name="description" required 
+                                  placeholder="Describe what you want to build in detail. Include features, target users, and any specific requirements..."></textarea>
+                    </div>
+                    
+                    <div class="form-group" id="domainGroup">
+                        <label for="projectDomain">Project Type:</label>
+                        <select id="projectDomain" name="domain">
+                            <option value="web-application">Web Application</option>
+                            <option value="mobile-app">Mobile App</option>
+                            <option value="api-service">API Service</option>
+                            <option value="desktop-app">Desktop Application</option>
+                            <option value="data-pipeline">Data Pipeline</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="exportFormatGroup" style="display: none;">
+                        <label for="exportFormat">Export Format:</label>
+                        <select id="exportFormat" name="export_format">
+                            <option value="markdown">Markdown</option>
+                            <option value="json">JSON</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="btn">
+                        🚀 Create Project
+                    </button>
+                </form>
+            </div>
+
+            <div class="progress-panel">
+                <div class="progress-header">
+                    <h3>🎯 Agent Status</h3>
+                    <p>Watch our AI agents work on your project!</p>
+                </div>
+                
+                <div class="agent-status">
+                    <div class="agent" id="orchestrator-agent">
+                        <div class="agent-icon">🎭</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Orchestrator Agent</div>
+                            <div class="agent-description">Coordinates the entire team</div>
+                            <div class="agent-status-text status-sleeping">Ready to coordinate! 💤</div>
+                        </div>
+                    </div>
+
+                    <div class="agent" id="ba-agent">
+                        <div class="agent-icon">📋</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Business Analyst</div>
+                            <div class="agent-description">Analyzes requirements and creates user stories</div>
+                            <div class="agent-status-text status-sleeping">Ready to analyze! 💤</div>
+                        </div>
+                    </div>
+
+                    <div class="agent" id="architect-agent">
+                        <div class="agent-icon">🏗️</div>
+                        <div class="agent-info">
+                            <div class="agent-name">System Architect</div>
+                            <div class="agent-description">Designs system architecture and tech stack</div>
+                            <div class="agent-status-text status-sleeping">Ready to design! 💤</div>
+                        </div>
+                    </div>
+
+                    <div class="agent" id="developer-agent">
+                        <div class="agent-icon">💻</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Developer Agent</div>
+                            <div class="agent-description">Writes code and implements features</div>
+                            <div class="agent-status-text status-sleeping">Ready to code! 💤</div>
+                        </div>
+                    </div>
+
+                    <div class="agent" id="tester-agent">
+                        <div class="agent-icon">🧪</div>
+                        <div class="agent-info">
+                            <div class="agent-name">QA Tester</div>
+                            <div class="agent-description">Creates tests and ensures quality</div>
+                            <div class="agent-status-text status-sleeping">Ready to test! 💤</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BA-Only Results Section (Hidden by default) -->
+        <div id="baResults" class="ba-results" style="display: none;">
+            <h2>📋 Business Analysis Complete</h2>
+            
+            <div class="results-header">
+                <div class="result-info">
+                    <p><strong>Project:</strong> <span id="baProjectName"></span></p>
+                    <p><strong>Generated:</strong> <span id="baTimestamp"></span></p>
+                    <p><strong>Token Count:</strong> <span id="baTokenCount"></span></p>
+                </div>
+                <div class="result-actions">
+                    <button id="downloadMarkdown" class="btn-secondary">📄 Download Markdown</button>
+                    <button id="downloadJson" class="btn-secondary">📊 Download JSON</button>
+                </div>
+            </div>
+            
+            <div class="specification-preview">
+                <h3>🎯 Executive Summary</h3>
+                <div id="executiveSummary" class="content-section"></div>
+                
+                <h3>📋 Functional Requirements</h3>
+                <div id="functionalReqs" class="content-section"></div>
+                
+                <h3>👤 User Stories</h3>
+                <div id="userStories" class="content-section"></div>
+                
+                <div class="view-full">
+                    <button id="viewFullSpec" class="btn">📖 View Complete Specification</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Progress Section (Hidden by default) -->
+        <div id="projectStatus" class="project-tabs status-hidden" style="display: none;">
+            <h2 id="projectId">Project Status</h2>
+            
+            <div class="progress-bar" style="width: 100%; background: #e9ecef; border-radius: 10px; margin: 20px 0;">
+                <div id="progressFill" style="width: 0%; height: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; transition: width 0.5s ease;"></div>
+            </div>
+            
+            <p id="statusText" style="text-align: center; font-weight: bold; color: #333;">Ready to start...</p>
+            
+            <!-- Completion Summary (Hidden until project completes) -->
+            <div id="completionSummary" style="display: none; margin: 20px 0; padding: 20px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 10px; text-align: center;">
+                <h3 style="color: #155724; margin-bottom: 10px;">🎉 Project Completed Successfully!</h3>
+                <p style="color: #155724; margin-bottom: 15px;">All agents have finished their work. Your project is ready!</p>
+                <button onclick="downloadProjectArtifacts()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">📁 Download Project Files</button>
+                <button onclick="viewProjectSummary()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">📊 View Summary</button>
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="showTab('overview')">📊 Overview</button>
+                <button class="tab-button" onclick="showTab('requirements')">📋 Requirements</button>
+                <button class="tab-button" onclick="showTab('architecture')">🏗️ Architecture</button>
+                <button class="tab-button" onclick="showTab('development')">💻 Development</button>
+                <button class="tab-button" onclick="showTab('testing')">🧪 Testing</button>
+            </div>
+
+            <div id="overview" class="tab-content active">
+                <h3>📊 Project Overview</h3>
+                <p>Project details and overall progress will appear here</p>
+            </div>
+
+            <div id="requirements" class="tab-content">
+                <h3>📋 Requirements Analysis</h3>
+                <p>User stories, business rules, and functional requirements will appear here</p>
+            </div>
+
+            <div id="architecture" class="tab-content">
+                <h3>🏗️ System Architecture</h3>
+                <p>System design, database schema, and API specifications will appear here</p>
+            </div>
+
+            <div id="development" class="tab-content">
+                <h3>💻 Development Progress</h3>
+                <p>Code files, implementation tasks, and development milestones will appear here</p>
+            </div>
+
+            <div id="testing" class="tab-content">
+                <h3>🧪 Testing & Quality</h3>
+                <p>Test cases, test results, bug reports, and quality metrics will appear here</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification element -->
+    <div id="notification" class="notification" style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+    "></div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Notification styles
+        const notificationStyles = `
+            .notification {
+                opacity: 0;
+                transform: translateX(400px);
+            }
+            .notification.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            .notification.success {
+                background: #28a745;
+            }
+            .notification.error {
+                background: #dc3545;
+            }
+            .notification.info {
+                background: #17a2b8;
+            }
+            .notification.warning {
+                background: #ffc107;
+                color: #333;
+            }
+            .status-hidden {
+                display: none !important;
+            }
+        `;
+        
+        // Add notification styles to head
+        const style = document.createElement('style');
+        style.textContent = notificationStyles;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
